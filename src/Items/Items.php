@@ -3,7 +3,6 @@
 class Items{
     private $data = [];
     private $username = "fsolomonov2";
-    private $method;
     private $link;
     private $headers = ["Accept: application/json"];
     public function __construct(){
@@ -33,7 +32,7 @@ class Items{
         return $this->headers;
     }
     public function getLink(){
-        $this->link = "https://".$this->username.".amocrm.ru/api/v2/".$_SESSION['selected']."/";
+        $this->link = "https://".$this->username.".amocrm.ru/api/v2/".$_SESSION['selected'];
         return $this->link;
     }
     public function getData(){
@@ -47,15 +46,20 @@ class Items{
 //    }
     public function add($data){
         $this->setData($data);
-        $this->optionsCURL();
+        return $this->optionsCURL();
     }
-    public function show(){
-        $result = $this->optionsCURL();
+    public function show($data){
+        $this->setData($data);
+        return $result = $this->optionsCURL();
 //        $this->showInfo($result);
-        var_dump($result);
+//        var_dump($result);
+//        echo "<pre>";
+//        var_dump($result);
+//        echo "</pre>";
     }
-    public function update(){
-        //
+    public function update($data){
+        $this->setData($data);
+        return $this->optionsCURL();
     }
     public function showInfo($arr){
         foreach ($arr as $key=>$value){
