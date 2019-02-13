@@ -7,9 +7,9 @@ class multiListCreator implements Creator{
     public $idMultiList;
     private $dataUpdate = [];
 
-    public function Creator(){
+    public function create(){
         $arr = [];
-        if(isset($_POST['nameMulti']) && $_POST['nameMulti']!=""){
+        if(!empty($_POST['nameMulti'])){
             $arr += ['name' => $_POST['nameMulti']];
         }
         else {
@@ -21,7 +21,7 @@ class multiListCreator implements Creator{
         $strList = [];
         $pointer = 1;
         for ($k = 0; $k<10; $k++){
-            if(isset($_POST['list'][$k]) && $_POST['list'][$k]!=""){
+            if(!empty($_POST['list'][$k])){
                 $strList += [$k => $_POST['list'][$k]];
             }
             else {
@@ -30,23 +30,32 @@ class multiListCreator implements Creator{
         }
         $arr += ['enums' => $strList];
         $this->data += ['add' => [0 => $arr]];
-        $_SESSION['selected'] = "fields";
-        $obj = new Items();
-        $this->result = $obj->add($this->data);
+        global $selected;
+        $selected = "fields";
+        $obj = new CURL();
+        $this->result = $obj->send($this->data);
         $this->idMultiList = $this->result['_embedded']['items'][0]['id'];
         $this->updateContact();
     }
 
     public function updateContact(){
-        $_SESSION['selected'] = "account?with=custom_fields";
-        $account = new Items();
-        $account = $account->show(null);
+        global $selected;
+        $selected = "contacts";
+        $account = new CURL();
+        $list = $account->send(NULL);
+        $listContacts = [];
+        foreach ($list['_embedded']['items'] as $key => $value){
+            array_push($listContacts, $value['id']);
+        }
+        $selected = "account?with=custom_fields";
+        $account = new CURL();
+        $account = $account->send(NULL);
         $arrayEnums = [];
         foreach ($account['_embedded']['custom_fields']['contacts'][$this->idMultiList]['enums'] as $key => $value){
             array_push($arrayEnums, $key);
         }
-        $_SESSION['selected'] = "contacts";
-        foreach ($_SESSION['$contactListG'] as $key => $value){
+        $selected = "contacts";
+        foreach ($listContacts as $key => $value){
             $arr = [];
             $arrValuesEnum = [];
             $randNums = rand(0, 10);
@@ -64,16 +73,8 @@ class multiListCreator implements Creator{
                                                         'values' => $arrValuesEnum,
                                                     ]]]]];
             $this->dataUpdate = $arr;
-            $obj = new Items();
-            $this->result = $obj->add($this->dataUpdate);
-//            echo "<b>result</b><br>";
-//            echo "<pre><br>";
-//            var_dump($this->result);
-//            echo "</pre>";
-//            echo "<b>data</b><br>";
-//            echo "<pre><br>";
-//            var_dump($this->dataUpdate);
-//            echo "</pre>";
+            $obj = new CURL();
+            $this->result = $obj->send($this->dataUpdate);
         }
     }
 }

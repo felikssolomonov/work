@@ -4,7 +4,7 @@ class notationCreator implements Creator{
     private $data = [];
     public $result;
 
-    public function Creator(){
+    public function create(){
         if(isset($_POST['option']) && $_POST['option']=="commonNotation"){
             $this->commonNotation();
         }
@@ -18,9 +18,10 @@ class notationCreator implements Creator{
         $arr += ['phone_number' => $_POST['phone']];
         $arr += ['direction' => "inbound"];
         $this->data = ['add' => [0 => $arr]];
-        $_SESSION['selected'] = "calls/add";
-        $obj = new Items();
-        $this->result = $obj->add($this->data);
+        global $selected;
+        $selected = "calls/add";
+        $obj = new CURL();
+        $this->result = $obj->send($this->data);
         if(isset($this->result['_embedded']['errors'])){
             echo "звонок не добавлен:<br>";
             echo $this->result['_embedded']['errors'][0]['msg'];
@@ -32,7 +33,7 @@ class notationCreator implements Creator{
 
     public function commonNotation(){
         $arr = [];
-        if(isset($_POST['text']) && $_POST['text']!=""){
+        if(!empty($_POST['text'])){
             $arr += ['text' => $_POST['text']];
         }
         else {
@@ -42,8 +43,9 @@ class notationCreator implements Creator{
         $arr += ['element_type' => $_POST['typeItem']];
         $arr += ['element_id' => $_POST['id']];
         $this->data = ['add' => [0 => $arr]];
-        $_SESSION['selected'] = "notes";
-        $obj = new Items();
-        $this->result = $obj->add($this->data);
+        global $selected;
+        $selected = "notes";
+        $obj = new CURL();
+        $this->result = $obj->send($this->data);
     }
 }

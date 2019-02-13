@@ -1,209 +1,147 @@
 <?php
 
-//include "../../src/Variables.php";
-
 class itemsCreator implements Creator {
     private $nameContact;
     private $nameCustomer;
     private $nameLead;
     private $nameCompany;
-    private $date;
-    private $number;
+    private $amount;
 
     private $data = [];
     private $arrayIdCompanies = [];
     private $arrayIdContacts = [];
     private $arrayIdLeads = [];
     private $arrayIdCustomers = [];
-    static public $contactList = [];
+    private $result;
 
-    public $result;
-
-    public function setNumber(){
-        if(isset($_POST['number']) && $_POST['number']!=""){
-            $this->number = $_POST['number'];
+    private function setAmount(){
+        if(!empty($_POST['amount'])){
+            $this->amount = $_POST['amount'];
         }
         else{
-            $this->number = 1;
+            $this->amount = 1;
         }
     }
-    public function getNumber(){
-        return $this->number;
-    }
-
-    public function setNameContact(){
-        if(isset($_POST['contact']) && $_POST['contact']!=""){
+    private function setNameContact(){
+        if(!empty($_POST['contact'])){
             $this->nameContact = $_POST['contact'];
         }
         else{
-            $this->nameContact = "no name";
+            $this->nameContact = NO_NAME;
         }
     }
-    public function getNameContact(){
-        return $this->nameContact;
-    }
-
-    public function setNameCustomer(){
-        if(isset($_POST['customer']) && $_POST['customer']!=""){
+    private function setNameCustomer(){
+        if(!empty($_POST['customer'])){
             $this->nameCustomer = $_POST['customer'];
         }
         else{
-            $this->nameCustomer = "no name";
+            $this->nameCustomer = NO_NAME;
         }
     }
-    public function getNameCustomer(){
-        return $this->nameCustomer;
-    }
-
-    public function setNameLead(){
-        if(isset($_POST['lead']) && $_POST['lead']!=""){
+    private function setNameLead(){
+        if(!empty($_POST['lead'])){
             $this->nameLead = $_POST['lead'];
         }
         else{
-            $this->nameLead = "no name";
+            $this->nameLead = NO_NAME;
         }
     }
-    public function getNameLead(){
-        return $this->nameLead;
-    }
-
-    public function setNameCompany(){
-        if(isset($_POST['company']) && $_POST['company']!=""){
+    private function setNameCompany(){
+        if(!empty($_POST['company'])){
             $this->nameCompany = $_POST['company'];
         }
         else{
-            $this->nameCompany = "no name";
+            $this->nameCompany = NO_NAME;
         }
-    }
-    public function getNameCompany(){
-        return $this->nameCompany;
     }
 
-    public function setIdContact($res){
-        for ($i = 0; $i<$this->number; $i++){
-            array_push($this->arrayIdContacts, $res['_embedded']['items'][$i]['id']);
+    private function setIds($res){
+        $array = [];
+        for ($i = 0; $i<$this->amount; $i++){
+            array_push($array, $res['_embedded']['items'][$i]['id']);
         }
-        foreach ($this->arrayIdContacts as $key => $value){
-            array_push($_SESSION['$contactListG'], $value);
-        }
-//        echo "<pre>";
-//        echo "this<br>";
-//        var_dump($_SESSION['$contactListG']);
-//        echo "this";
-//        echo "</pre>";
-    }
-    public function getIdContact(){
-//        return $this->arrayIdContacts;
-        return self::$contactList;
+        return $array;
     }
 
-    public function setIdCustomer($res){
-        for ($i = 0; $i<$this->number; $i++){
-            $this->arrayIdCustomers += [$i => $res['_embedded']['items'][$i]['id']];
-        }
-    }
-    public function getIdCustomer(){
-        return $this->arrayIdCustomers;
-    }
-
-    public function setIdLead($res){
-        for ($i = 0; $i<$this->number; $i++){
-            $this->arrayIdLeads += [$i => $res['_embedded']['items'][$i]['id']];
-        }
-    }
-    public function getIdLead(){
-        return $this->arrayIdLeads;
-    }
-
-    public function setIdCompany($res){
-        for ($i = 0; $i<$this->number; $i++){
-            $this->arrayIdCompanies += [$i => $res['_embedded']['items'][$i]['id']];
-        }
-    }
-    public function getIdCompany(){
-        return $this->arrayIdCompanies;
-    }
-
-    public function setDate(){
-        if (isset($_POST['date']) && $_POST['date']!=""){
-            $this->date = strtotime($_POST['date']);
-        }
-    }
-    public function getDate(){
-        return $this->date;
-    }
-
-    public function Creator(){
-        $this->setNumber();
+    public function create(){
+        $this->setAmount();
         $this->setNameContact();
         $this->setNameCustomer();
         $this->setNameLead();
         $this->setNameCompany();
-        $this->setDate();
 
-        $this->companiesCreator();
-        $this->contactsCreator();
-        $this->leadsCreator();
-        $this->customersCreator();
+        $this->create_companies();
+        $this->create_contacts();
+        $this->create_leads();
+        $this->create_customers();
     }
 
-    public function companiesCreator(){
+    private function create_companies(){
         $arr = [];
-        for ($k = 0; $k<$this->number; $k++){
-            $arr += [$k => ['name' => $this->getNameCompany().$k]];
+        for ($k = 0; $k<$this->amount; $k++){
+            $arr += [$k => ['name' => $this->nameCompany.$k]];
         }
         $this->data['add'] = $arr;
-        $_SESSION['selected'] = "companies";
-        $obj = new Items();
-        $this->result = $obj->add($this->data);
-        $this->setIdCompany($this->result);
+        global $selected;
+        $selected = "companies";
+        $obj = new CURL();
+        $this->result = $obj->send($this->data);
+        $array = $this->setIds($this->result);
+        $this->arrayIdCompanies = array_merge($this->arrayIdCompanies, $array);
     }
 
-    public function contactsCreator(){
+    private function create_contacts(){
         $arr = [];
-        for ($k = 0; $k<$this->number; $k++){
+        for ($k = 0; $k<$this->amount; $k++){
             $arr += [$k => [
-                'name' => $this->getNameContact().$k,
+                'name' => $this->nameContact.$k,
                 'company_id' => $this->arrayIdCompanies[$k]
             ]];
         }
         $this->data['add'] = $arr;
-        $_SESSION['selected'] = "contacts";
-        $obj = new Items();
-        $this->result = $obj->add($this->data);
-        $this->setIdContact($this->result);
+        global $selected;
+        $selected = "contacts";
+        $obj = new CURL();
+        $this->result = $obj->send($this->data);
+        $array = $this->setIds($this->result);
+        $this->arrayIdContacts = array_merge($this->arrayIdContacts, $array);
+        $_SESSION['contactList'] = array_merge($_SESSION['contactList'], $array);
     }
 
-    public function leadsCreator(){
+    private function create_leads(){
         $arr = [];
-        for ($k = 0; $k<$this->number; $k++){
+        for ($k = 0; $k<$this->amount; $k++){
             $arr += [$k => [
-                'name' => $this->getNameLead().$k,
+                'name' => $this->nameLead.$k,
                 'contacts_id' => [0 => $this->arrayIdContacts[$k]],
                 'company_id' => $this->arrayIdCompanies[$k],
             ]];
         }
         $this->data['add'] = $arr;
-        $_SESSION['selected'] = "leads";
-        $obj = new Items();
-        $this->result = $obj->add($this->data);
-        $this->setIdLead($this->result);
+        global $selected;
+        $selected = "leads";
+        $obj = new CURL();
+        $this->result = $obj->send($this->data);
+        $array = $this->setIds($this->result);
+        $this->arrayIdLeads = array_merge($this->arrayIdLeads, $array);
     }
 
-    public function customersCreator(){
+    private function create_customers(){
         $arr = [];
-        for ($k = 0; $k<$this->number; $k++){
+        for ($k = 0; $k<$this->amount; $k++){
             $arr += [$k => [
-                'name' => $this->getNameLead().$k,
-                'next_date' => $this->getDate(),
+                'name' => $this->nameCustomer.$k,
+                'next_date' => $_SERVER['REQUEST_TIME'],
                 'contacts_id' => [0 => $this->arrayIdContacts[$k]],
                 'company_id' => $this->arrayIdCompanies[$k],
             ]];
         }
         $this->data['add'] = $arr;
-        $_SESSION['selected'] = "customers";
-        $obj = new Items();
-        $this->result = $obj->add($this->data);
-        $this->setIdCustomer($this->result);
+        global $selected;
+        $selected = "customers";
+        $obj = new CURL();
+        $this->result = $obj->send($this->data);
+        $array = $this->setIds($this->result);
+        $this->arrayIdCustomers = array_merge($this->arrayIdCustomers, $array);
     }
 }

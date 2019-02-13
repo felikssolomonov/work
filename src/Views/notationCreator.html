@@ -2,13 +2,11 @@
     <form method='post'>
         <label>Для создания простого примечания заполни все поля кроме номера телефона</label><br>
         <label>Для создания входящего звонка введи только номер телефона</label><br>
-        <label>Выбери действие:</label><br>
         <select name='option'>
             <option value='commonNotation'>Простое примечание</option>
             <option value='incomingCall'>Входящий звонок</option>
         </select><br>
 
-        <label>Выбери тип сущности:</label><br>
         <select name='typeItem'>
             <option value='1'>Контакт</option>
             <option value='2'>Сделка</option>
@@ -16,13 +14,11 @@
             <option value='12'>Покупатель</option>
         </select><br>
 
-        <input type='number' name='id' placeholder='id of element' min="1"><br>
+        <input type='text' name='id' placeholder='id of element'><br>
         <input type='text' name='text' placeholder='text of notation'><br>
 
-        <label>Данные для звонка:</label><br>
-        <input type='text' name='phone' placeholder='phone number'><br>
+        <input type='tel' name='phone' placeholder='phone number' pattern="8[0-9]{10}"><br>
 
         <input type='submit'  name='click' value='Отправить'><br>
-        <input type='submit'  name='destroy' value='Очистить сессию'><br>
     </form>
 </div>

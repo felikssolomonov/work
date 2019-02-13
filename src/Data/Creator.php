@@ -1,5 +1,5 @@
 <?php
 
 interface Creator{
-    function Creator();
+    function create();
 }

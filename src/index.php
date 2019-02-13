@@ -6,7 +6,7 @@ spl_autoload_register(function ($class) {
 });
 include "../src/Header.php";
 include "../src/App/Controller.php";
-require_once "../src/Items/Items.php";
+require_once "../src/Items/CURL.php";
 require_once "../src/Data/Creator.php";
 require_once "../src/Data/itemsCreator.php";
 require_once "../src/Data/multiListCreator.php";
@@ -14,10 +14,12 @@ require_once "../src/Data/notationCreator.php";
 require_once "../src/Data/taskCreator.php";
 require_once "../src/Data/textCreator.php";
 
+$obj = new CURL();
+$obj->auth();
 
 global $selected;
 
-if (isset($_GET['selected']) && $_GET['selected']!="") {
+if (!empty($_GET['selected'])) {
     $selected = $_GET['selected'];
     include "../src/Views/".$selected.".html";
     if ($_GET['selected'] == "taskCreator"){
@@ -34,11 +36,12 @@ if (isset($_GET['selected']) && $_GET['selected']!="") {
 
 if(isset($_POST['click'])){
     $obj = new Controller();
-    $obj->loaderItems($selected, "Creator");
+    $obj->loaderItems($selected, "create");
 }
 
 if(isset($_POST['destroy'])){
     session_destroy();
+    echo "cleaning session";
 }
 
 include "../src/App/Footer.php";

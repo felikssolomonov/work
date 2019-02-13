@@ -26,24 +26,24 @@ body{
     clear: both;
 }
 
-#menuHrefs a{
+#menuNav a{
     padding: 5px;
     border-radius: 5px;
     margin-right: 5px;
     color: #626262;
 }
 
-#menuHrefs a:hover{
+#menuNav a:hover{
     background-color: #cdcdcd;
 }
 
-#menu{
+#menuTitle{
     color: #666;
     font-family: Comic Sans MS, sans-serif;
     font-size: 1.7em;
 }
 
-#menu hr{
+#menuTitle hr{
     width: 50%;
     margin: 10px 25% 10px 25%;
     max-width: 100%;
@@ -53,20 +53,20 @@ nav{
     text-align: center;
 }
 
-#menuWW {
+#menu {
     display: table;
     width: 70%;
     margin: 0 15%;
     padding: 0;
 }
 
-#menuWW .menuWWW {
+#menu .menuItems {
     /*display: table-cell;*/
     display: inline-block;
     float: none;
 }
 
-#menuWW .menuWWW a {
+#menu .menuItems a {
     display: block;
     padding: 8px 15px;
     background: #f5c79d;
@@ -80,7 +80,7 @@ nav{
     border: 2px solid #f59c4f;
 }
 
-#menuWW .menuWWW a:hover {
+#menu .menuItems a:hover {
 
     border: 2px solid #f5741a;
     background-color: #f59c4f;
@@ -90,56 +90,31 @@ nav{
     -o-transition: all 0.4s ease;
 }
 
-#menuHrefs:hover .menuWWW a:hover{
+#menuNav:hover .menuItems a:hover{
     padding: 13px 20px;
     font-family: Tahoma;
     font-size: 12px;
     margin: -3px -3px -3px -3px;
 }
-/*////////////*/
-.multiselect {
-    width: 200px;
-}
-
-.selectBox {
-    position: relative;
-}
-
-.selectBox select {
-    width: 100%;
-    font-weight: bold;
-}
-
-.overSelect {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-}
-
-#checkboxes {
-    display: none;
-    border: 1px #dadada solid;
-}
-
-#checkboxes label {
+/*///////////////////////////////////////////////////////////////////////////*/
+#menu .menuItems input {
     display: block;
+    background: #f5c79d;
+    font-family: Tahoma;
+    font-size: 12px;
+    color: #030303;
+    text-decoration: none;
+    text-align: center;
+    text-transform: uppercase;
+    margin: 2px 2px 2px 2px;
+    border: 2px solid #f59c4f;
 }
 
-#checkboxes label:hover {
-    background-color: #1e90ff;
-}
-/**/
-#inputs {
-    display: none;
-    border: 1px #dadada solid;
-}
-
-#inputs input {
-    display: block;
-}
-
-#inputs input:hover {
-    background-color: #1e90ff;
+#menu .menuItems input:hover {
+    border: 2px solid #f5741a;
+    background-color: #f59c4f;
+    transition: all 0.4s ease;
+    -webkit-transition: all 0.4s ease;
+    -moz-transition: all 0.4s ease;
+    -o-transition: all 0.4s ease;
 }
