@@ -18,20 +18,81 @@ $obj = new CURL();
 $obj->auth();
 
 global $selected;
+global $idsCompanies;
+global $idsContacts;
+global $idsCustomers;
+global $idsLeads;
+global $idsTasks;
+global $idsTextFields;
 
 if (!empty($_GET['selected'])) {
     $selected = $_GET['selected'];
     include "../src/Views/".$selected.".html";
+//    if ($_GET['selected'] == "textCreator"){
+//        $idsTasks = itemsCreator::getAllIds('tasks');
+//        if(empty($idsTasks)){
+//            echo "список незавершенных задач пуст<br>";
+//        }
+//        else {
+//            echo "список id незавершенных задач<br><pre>";
+//            var_dump($idsTasks);
+//            echo "</pre>";
+//        }
+//    }
     if ($_GET['selected'] == "taskCreator"){
-        if(empty($_SESSION['tasksId'])){
-            echo "список незавершенных задач пуст";
+        $idsTasks = itemsCreator::getAllIds('tasks');
+        if(empty($idsTasks)){
+            echo "список незавершенных задач пуст<br>";
         }
         else {
-            echo "список id незавершенных задач<pre>";
-            var_dump($_SESSION['tasksId']);
+            echo "список id незавершенных задач<br><pre>";
+            var_dump($idsTasks);
             echo "</pre>";
         }
     }
+    if (($_GET['selected'] == "notationCreator") || ($_GET['selected'] == "taskCreator")){
+        //это всё загнать в функцию
+        $idsContacts = itemsCreator::getAllIds('contacts');
+        if(empty($idsContacts)){
+            echo "список контактов пуст<br>";
+        }
+        else {
+            echo "список id контактов<br><pre>";
+            var_dump($idsContacts);
+            echo "</pre>";
+        }
+        //
+        $idsCompanies = itemsCreator::getAllIds('companies');
+        if(empty($idsCompanies)){
+            echo "список компаний пуст<br>";
+        }
+        else {
+            echo "список id компаний<br><pre>";
+            var_dump($idsCompanies);
+            echo "</pre>";
+        }
+        //
+        $idsCustomers = itemsCreator::getAllIds('customers');
+        if(empty($idsCustomers)){
+            echo "список покупателей пуст<br>";
+        }
+        else {
+            echo "список id покупателей<br><pre>";
+            var_dump($idsCustomers);
+            echo "</pre>";
+        }
+        //
+        $idsLeads = itemsCreator::getAllIds('leads');
+        if(empty($idsLeads)){
+            echo "список сделок пуст<br>";
+        }
+        else {
+            echo "список id сделок<br><pre>";
+            var_dump($idsLeads);
+            echo "</pre>";
+        }
+    }
+    $selected = $_GET['selected'];
 }
 
 if(isset($_POST['click'])){

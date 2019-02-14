@@ -13,11 +13,3 @@
 <body <?php include "../src/Variables.php"; ?>>
     <div>
         <?php include "../src/App/Menu.php"; ?>
-        <?php
-            if(empty($_SESSION['contactList'])){
-                $_SESSION['contactList'] = [];
-            }
-            if(empty($_SESSION['tasksId'])){
-                $_SESSION['tasksId'] = [];
-            }
-        ?>

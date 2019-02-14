@@ -24,6 +24,7 @@ class CURL{
         $out = curl_exec($curl);
         $code=curl_getinfo($curl,CURLINFO_HTTP_CODE);
         curl_close($curl);
+        sleep(1);
         $code = (int)$code;
         $errors = [
             301 => 'Moved permanently',

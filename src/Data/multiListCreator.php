@@ -13,7 +13,7 @@ class multiListCreator implements Creator{
             $arr += ['name' => $_POST['nameMulti']];
         }
         else {
-            $arr += ['name' => "no name"];
+            $arr += ['name' => NO_NAME];
         }
         $arr += ['type' => 5];
         $arr += ['element_type' => 1];
@@ -39,14 +39,9 @@ class multiListCreator implements Creator{
     }
 
     public function updateContact(){
+        global $idsContacts;
+        $idsContacts = itemsCreator::getAllIds('contacts');
         global $selected;
-        $selected = "contacts";
-        $account = new CURL();
-        $list = $account->send(NULL);
-        $listContacts = [];
-        foreach ($list['_embedded']['items'] as $key => $value){
-            array_push($listContacts, $value['id']);
-        }
         $selected = "account?with=custom_fields";
         $account = new CURL();
         $account = $account->send(NULL);
@@ -55,7 +50,7 @@ class multiListCreator implements Creator{
             array_push($arrayEnums, $key);
         }
         $selected = "contacts";
-        foreach ($listContacts as $key => $value){
+        foreach ($idsContacts as $key => $value){
             $arr = [];
             $arrValuesEnum = [];
             $randNums = rand(0, 10);

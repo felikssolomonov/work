@@ -32,9 +32,6 @@ class taskCreator implements Creator{
         $selected = "tasks";
         $obj = new CURL();
         $this->result = $obj->send($this->data);
-        if(($key = array_search($_POST['id'],$_SESSION['tasksId'])) !== FALSE){
-            unset($_SESSION['tasksId'][$key]);
-        }
     }
 
     public function add(){
@@ -54,6 +51,6 @@ class taskCreator implements Creator{
         $selected = "tasks";
         $obj = new CURL();
         $this->result = $obj->send($this->data);
-        array_push($_SESSION['tasksId'], $this->result['_embedded']['items'][0]['id']);
+//        array_push($_SESSION['tasksId'], $this->result['_embedded']['items'][0]['id']);
     }
 }

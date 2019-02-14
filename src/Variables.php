@@ -15,3 +15,4 @@ const SITE = ".amocrm.ru/";
 const API_URL = "api/v2/";
 const API_URL_PRIVATE = "private/api/";
 const NO_NAME = "no_name";
+const TEXT_FIELD = "text_field_";

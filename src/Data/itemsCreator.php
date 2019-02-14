@@ -1,10 +1,10 @@
 <?php
 
 class itemsCreator implements Creator {
-    private $nameContact;
-    private $nameCustomer;
-    private $nameLead;
-    private $nameCompany;
+    private $name_contact;
+    private $name_customer;
+    private $name_lead;
+    private $name_company;
     private $amount;
 
     private $data = [];
@@ -14,44 +14,21 @@ class itemsCreator implements Creator {
     private $arrayIdCustomers = [];
     private $result;
 
-    private function setAmount(){
+    private function setPOSTValues(){
+        $arr = ["company","contact","lead","customer",];
+        foreach ($arr as $value){
+            if(!empty($_POST[$value])){
+                $this->{"name_".$value} = $_POST[$value];
+            }
+            else{
+                $this->{"name_".$value} = NO_NAME;
+            }
+        }
         if(!empty($_POST['amount'])){
             $this->amount = $_POST['amount'];
         }
         else{
             $this->amount = 1;
-        }
-    }
-    private function setNameContact(){
-        if(!empty($_POST['contact'])){
-            $this->nameContact = $_POST['contact'];
-        }
-        else{
-            $this->nameContact = NO_NAME;
-        }
-    }
-    private function setNameCustomer(){
-        if(!empty($_POST['customer'])){
-            $this->nameCustomer = $_POST['customer'];
-        }
-        else{
-            $this->nameCustomer = NO_NAME;
-        }
-    }
-    private function setNameLead(){
-        if(!empty($_POST['lead'])){
-            $this->nameLead = $_POST['lead'];
-        }
-        else{
-            $this->nameLead = NO_NAME;
-        }
-    }
-    private function setNameCompany(){
-        if(!empty($_POST['company'])){
-            $this->nameCompany = $_POST['company'];
-        }
-        else{
-            $this->nameCompany = NO_NAME;
         }
     }
 
@@ -64,22 +41,43 @@ class itemsCreator implements Creator {
     }
 
     public function create(){
-        $this->setAmount();
-        $this->setNameContact();
-        $this->setNameCustomer();
-        $this->setNameLead();
-        $this->setNameCompany();
+        $this->setPOSTValues();
 
         $this->create_companies();
         $this->create_contacts();
         $this->create_leads();
         $this->create_customers();
     }
+    public static function getAllIds($method){
+        global $selected;
+        $selected = $method;
+        $account = new CURL();
+        $list = $account->send(NULL);
+        $listIds = [];
+        if($selected == "tasks"){
+            if(!empty($list['_embedded']['items'])){
+                foreach ($list['_embedded']['items'] as $key => $value){
+                    if(!$value['is_completed']){
+                        array_push($listIds, $value['id']);
+                    }
+                }
+            }
+        }
+        else {
+            if(!empty($list['_embedded']['items'])){
+                foreach ($list['_embedded']['items'] as $key => $value){
+                    array_push($listIds, $value['id']);
+                }
+            }
+        }
+        return $listIds;
+    }
 
     private function create_companies(){
+        //array_chunk
         $arr = [];
         for ($k = 0; $k<$this->amount; $k++){
-            $arr += [$k => ['name' => $this->nameCompany.$k]];
+            $arr += [$k => ['name' => $this->name_company.$k]];
         }
         $this->data['add'] = $arr;
         global $selected;
@@ -89,12 +87,11 @@ class itemsCreator implements Creator {
         $array = $this->setIds($this->result);
         $this->arrayIdCompanies = array_merge($this->arrayIdCompanies, $array);
     }
-
     private function create_contacts(){
         $arr = [];
         for ($k = 0; $k<$this->amount; $k++){
             $arr += [$k => [
-                'name' => $this->nameContact.$k,
+                'name' => $this->name_contact.$k,
                 'company_id' => $this->arrayIdCompanies[$k]
             ]];
         }
@@ -105,14 +102,14 @@ class itemsCreator implements Creator {
         $this->result = $obj->send($this->data);
         $array = $this->setIds($this->result);
         $this->arrayIdContacts = array_merge($this->arrayIdContacts, $array);
-        $_SESSION['contactList'] = array_merge($_SESSION['contactList'], $array);
-    }
 
+//        $_SESSION['contactList'] = array_merge($_SESSION['contactList'], $array);
+    }
     private function create_leads(){
         $arr = [];
         for ($k = 0; $k<$this->amount; $k++){
             $arr += [$k => [
-                'name' => $this->nameLead.$k,
+                'name' => $this->name_lead.$k,
                 'contacts_id' => [0 => $this->arrayIdContacts[$k]],
                 'company_id' => $this->arrayIdCompanies[$k],
             ]];
@@ -125,12 +122,11 @@ class itemsCreator implements Creator {
         $array = $this->setIds($this->result);
         $this->arrayIdLeads = array_merge($this->arrayIdLeads, $array);
     }
-
     private function create_customers(){
         $arr = [];
         for ($k = 0; $k<$this->amount; $k++){
             $arr += [$k => [
-                'name' => $this->nameCustomer.$k,
+                'name' => $this->name_customer.$k,
                 'next_date' => $_SERVER['REQUEST_TIME'],
                 'contacts_id' => [0 => $this->arrayIdContacts[$k]],
                 'company_id' => $this->arrayIdCompanies[$k],
