@@ -34,19 +34,29 @@ class itemsCreator implements Creator {
 
     private function setIds($res){
         $array = [];
-        for ($i = 0; $i<$this->amount; $i++){
-            array_push($array, $res['_embedded']['items'][$i]['id']);
+        foreach ($res['_embedded']['items'] as $key=>$value){
+            array_push($array, $value['id']);
         }
         return $array;
     }
 
     public function create(){
         $this->setPOSTValues();
-
-        $this->create_companies();
-        $this->create_contacts();
-        $this->create_leads();
-        $this->create_customers();
+        $counter = 250;
+        $it = floor($this->amount/$counter);//
+        for ($k = 0; $k<$it; $k++){
+            $id = $k * $counter;
+            $this->create_companies($id, $counter);
+            $this->create_contacts($id, $counter);
+            $this->create_leads($id, $counter);
+            $this->create_customers($id, $counter);
+        }
+        $id = $it * $counter;
+        $counter = $this->amount%$counter;
+        $this->create_companies($id, $counter);
+        $this->create_contacts($id, $counter);
+        $this->create_leads($id, $counter);
+        $this->create_customers($id, $counter);
     }
     public static function getAllIds($method){
         global $selected;
@@ -73,69 +83,66 @@ class itemsCreator implements Creator {
         return $listIds;
     }
 
-    private function create_companies(){
-        //array_chunk
-        $arr = [];
-        for ($k = 0; $k<$this->amount; $k++){
-            $arr += [$k => ['name' => $this->name_company.$k]];
-        }
-        $this->data['add'] = $arr;
+    private function create_companies($id, $counter){
         global $selected;
         $selected = "companies";
+        $arr = [];
+        for ($k = 0; $k<$counter; $k++, $id++){
+            $arr += [$k => ['name' => $this->name_company.$id]];
+        }
         $obj = new CURL();
+        $this->data['add'] = $arr;
         $this->result = $obj->send($this->data);
         $array = $this->setIds($this->result);
         $this->arrayIdCompanies = array_merge($this->arrayIdCompanies, $array);
     }
-    private function create_contacts(){
-        $arr = [];
-        for ($k = 0; $k<$this->amount; $k++){
-            $arr += [$k => [
-                'name' => $this->name_contact.$k,
-                'company_id' => $this->arrayIdCompanies[$k]
-            ]];
-        }
-        $this->data['add'] = $arr;
+    private function create_contacts($id, $counter){
         global $selected;
         $selected = "contacts";
+        $arr = [];
+        for ($k = 0; $k<$counter; $k++, $id++){
+            $arr += [$k => [
+                'name' => $this->name_contact.$id,
+                'company_id' => $this->arrayIdCompanies[$id]
+            ]];
+        }
         $obj = new CURL();
+        $this->data['add'] = $arr;
         $this->result = $obj->send($this->data);
         $array = $this->setIds($this->result);
         $this->arrayIdContacts = array_merge($this->arrayIdContacts, $array);
-
-//        $_SESSION['contactList'] = array_merge($_SESSION['contactList'], $array);
     }
-    private function create_leads(){
-        $arr = [];
-        for ($k = 0; $k<$this->amount; $k++){
-            $arr += [$k => [
-                'name' => $this->name_lead.$k,
-                'contacts_id' => [0 => $this->arrayIdContacts[$k]],
-                'company_id' => $this->arrayIdCompanies[$k],
-            ]];
-        }
-        $this->data['add'] = $arr;
+    private function create_leads($id, $counter){
         global $selected;
         $selected = "leads";
+        $arr = [];
+        for ($k = 0; $k<$counter; $k++, $id++){
+            $arr += [$k => [
+                'name' => $this->name_lead.$id,
+                'contacts_id' => [0 => $this->arrayIdContacts[$id]],
+                'company_id' => $this->arrayIdCompanies[$id],
+            ]];
+        }
         $obj = new CURL();
+        $this->data['add'] = $arr;
         $this->result = $obj->send($this->data);
         $array = $this->setIds($this->result);
         $this->arrayIdLeads = array_merge($this->arrayIdLeads, $array);
     }
-    private function create_customers(){
-        $arr = [];
-        for ($k = 0; $k<$this->amount; $k++){
-            $arr += [$k => [
-                'name' => $this->name_customer.$k,
-                'next_date' => $_SERVER['REQUEST_TIME'],
-                'contacts_id' => [0 => $this->arrayIdContacts[$k]],
-                'company_id' => $this->arrayIdCompanies[$k],
-            ]];
-        }
-        $this->data['add'] = $arr;
+    private function create_customers($id, $counter){
         global $selected;
         $selected = "customers";
+        $arr = [];
+        for ($k = 0; $k<$counter; $k++, $id++){
+            $arr += [$k => [
+                'name' => $this->name_customer.$id,
+                'next_date' => $_SERVER['REQUEST_TIME'],
+                'contacts_id' => [0 => $this->arrayIdContacts[$id]],
+                'company_id' => $this->arrayIdCompanies[$id],
+            ]];
+        }
         $obj = new CURL();
+        $this->data['add'] = $arr;
         $this->result = $obj->send($this->data);
         $array = $this->setIds($this->result);
         $this->arrayIdCustomers = array_merge($this->arrayIdCustomers, $array);

@@ -5,6 +5,7 @@ $arrMenu = [
     "textCreator"    =>  "Текст",
     "notationCreator"    =>  "Примечание",
     "taskCreator"    =>  "Задача",
+    "sessionDestroy" => "Очистить сессию",
     ];
 
 const SUB_DOMAIN = "fsolomonov2";

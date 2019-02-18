@@ -97,24 +97,24 @@ nav{
     margin: -3px -3px -3px -3px;
 }
 /*///////////////////////////////////////////////////////////////////////////*/
-#menu .menuItems input {
-    display: block;
-    background: #f5c79d;
-    font-family: Tahoma;
-    font-size: 12px;
-    color: #030303;
-    text-decoration: none;
-    text-align: center;
-    text-transform: uppercase;
-    margin: 2px 2px 2px 2px;
-    border: 2px solid #f59c4f;
-}
+/*#menu .menuItems input {*/
+    /*display: block;*/
+    /*background: #f5c79d;*/
+    /*font-family: Tahoma;*/
+    /*font-size: 12px;*/
+    /*color: #030303;*/
+    /*text-decoration: none;*/
+    /*text-align: center;*/
+    /*text-transform: uppercase;*/
+    /*margin: 2px 2px 2px 2px;*/
+    /*border: 2px solid #f59c4f;*/
+/*}*/
 
-#menu .menuItems input:hover {
-    border: 2px solid #f5741a;
-    background-color: #f59c4f;
-    transition: all 0.4s ease;
-    -webkit-transition: all 0.4s ease;
-    -moz-transition: all 0.4s ease;
-    -o-transition: all 0.4s ease;
-}
+/*#menu .menuItems input:hover {*/
+    /*border: 2px solid #f5741a;*/
+    /*background-color: #f59c4f;*/
+    /*transition: all 0.4s ease;*/
+    /*-webkit-transition: all 0.4s ease;*/
+    /*-moz-transition: all 0.4s ease;*/
+    /*-o-transition: all 0.4s ease;*/
+/*}*/

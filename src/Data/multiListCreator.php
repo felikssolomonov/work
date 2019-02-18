@@ -6,8 +6,25 @@ class multiListCreator implements Creator{
     public $result;
     public $idMultiList;
     private $dataUpdate = [];
+    private $idsContacts;
+    private $arrayEnums = [];
 
     public function create(){
+        global $idsContacts;
+        $idsContacts = [];
+        $limit_rows = 500;
+        $limit_offset = 0;
+        $flag = TRUE;
+        $list = [];
+        $w = 0;
+        while((count($list)==$limit_rows) || ($flag==TRUE)) {
+            $list = itemsCreator::getAllIds('contacts/?limit_rows='.$limit_rows.'&limit_offset='.$limit_offset);
+            $idsContacts = array_merge($idsContacts, $list);
+            $limit_offset += $limit_rows;
+            $flag = FALSE;
+            $w++;
+        }
+        $this->idsContacts = $idsContacts;
         $arr = [];
         if(!empty($_POST['nameMulti'])){
             $arr += ['name' => $_POST['nameMulti']];
@@ -39,37 +56,48 @@ class multiListCreator implements Creator{
     }
 
     public function updateContact(){
-        global $idsContacts;
-        $idsContacts = itemsCreator::getAllIds('contacts');
         global $selected;
         $selected = "account?with=custom_fields";
         $account = new CURL();
         $account = $account->send(NULL);
-        $arrayEnums = [];
         foreach ($account['_embedded']['custom_fields']['contacts'][$this->idMultiList]['enums'] as $key => $value){
-            array_push($arrayEnums, $key);
+            array_push($this->arrayEnums, $key);
         }
         $selected = "contacts";
-        foreach ($idsContacts as $key => $value){
-            $arr = [];
+        $counter = 250;
+        $amount = count($this->idsContacts);
+        $it = floor($amount/$counter);
+        for ($k = 0; $k<$it; $k++){
+            $id = $k * $counter;
+            $this->setData($id, $counter);
+        }
+        $id = $it * $counter;
+        $counter = $amount%$counter;
+        $this->setData($id, $counter);
+    }
+
+    private function setData($id, $counter){
+        $arr = [];
+        $obj = new CURL();
+        for ($k = 0; $k<$counter; $k++, $id++){
             $arrValuesEnum = [];
             $randNums = rand(0, 10);
             if($randNums==0){
                 continue;
             }
             for($i=0; $i<$randNums; $i++){
-                $arrValuesEnum += [$i => $arrayEnums[rand(0, 9)]];
+                $arrValuesEnum += [$i => $this->arrayEnums[rand(0, 9)]];
             }
-            $arr += ['update' => [0 => ['id' => $value,
-                                        'updated_at' => $_SERVER['REQUEST_TIME'],
-                                        'custom_fields' => [
-                                                    0 => [
-                                                        'id' => $this->idMultiList,
-                                                        'values' => $arrValuesEnum,
-                                                    ]]]]];
-            $this->dataUpdate = $arr;
-            $obj = new CURL();
-            $this->result = $obj->send($this->dataUpdate);
+            $arr += [$k => [
+                'id' => $this->idsContacts[$id],
+                'updated_at' => $_SERVER['REQUEST_TIME'],
+                'custom_fields' => [
+                    0 => [
+                        'id' => $this->idMultiList,
+                        'values' => $arrValuesEnum,
+                    ]]]];
         }
+        $this->dataUpdate['update'] = $arr;
+        $this->result = $obj->send($this->dataUpdate);
     }
 }
