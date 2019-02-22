@@ -88,7 +88,10 @@ class itemsCreator implements Creator {
         $selected = "companies";
         $arr = [];
         for ($k = 0; $k<$counter; $k++, $id++){
-            $arr += [$k => ['name' => $this->name_company.$id]];
+            $arr += [$k => [
+                'name' => $this->name_company.$id,
+                'created_at' => $_SERVER['REQUEST_TIME'],
+            ]];
         }
         $obj = new CURL();
         $this->data['add'] = $arr;
@@ -103,7 +106,8 @@ class itemsCreator implements Creator {
         for ($k = 0; $k<$counter; $k++, $id++){
             $arr += [$k => [
                 'name' => $this->name_contact.$id,
-                'company_id' => $this->arrayIdCompanies[$id]
+                'created_at' => $_SERVER['REQUEST_TIME'],
+                'company_id' => $this->arrayIdCompanies[$id],
             ]];
         }
         $obj = new CURL();
@@ -119,6 +123,7 @@ class itemsCreator implements Creator {
         for ($k = 0; $k<$counter; $k++, $id++){
             $arr += [$k => [
                 'name' => $this->name_lead.$id,
+                'created_at' => $_SERVER['REQUEST_TIME'],
                 'contacts_id' => [0 => $this->arrayIdContacts[$id]],
                 'company_id' => $this->arrayIdCompanies[$id],
             ]];
@@ -136,6 +141,7 @@ class itemsCreator implements Creator {
         for ($k = 0; $k<$counter; $k++, $id++){
             $arr += [$k => [
                 'name' => $this->name_customer.$id,
+                'created_at' => $_SERVER['REQUEST_TIME'],
                 'next_date' => $_SERVER['REQUEST_TIME'],
                 'contacts_id' => [0 => $this->arrayIdContacts[$id]],
                 'company_id' => $this->arrayIdCompanies[$id],

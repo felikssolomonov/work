@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 ini_set('max_execution_time', 1200);
 define('DIR', __DIR__);
@@ -25,8 +26,11 @@ global $idsCustomers;
 global $idsLeads;
 global $idsTasks;
 global $idsTextFields;
+global $ids;
+
 
 if (!empty($_GET['selected'])) {
+    echo $ids;
     $selected = $_GET['selected'];
     include "../src/Views/".$selected.".html";
     if ($_GET['selected'] == "sessionDestroy"){
